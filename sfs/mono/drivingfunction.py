@@ -11,10 +11,12 @@ from .. import defs
 def wfs_2d_line(omega, x0, n0, xs, c=None):
     """Line source by 2-dimensional WFS.
 
-    ::
+    Eq.(#e4b) in [Wierstorf et al, 2015]::
 
 
-      D(x0,k) = j k (x0-xs) n0 / |x0-xs| * H1(k |x0-xs|)
+                   jw (x0-xs) nx0   (2)/ w         \
+      D(x0,w) =  - -- -----------  H1  | - |x0-xs| |
+                   2c   |x0-xs|        \ c         /
 
 
     """
@@ -24,17 +26,17 @@ def wfs_2d_line(omega, x0, n0, xs, c=None):
     k = util.wavenumber(omega, c)
     ds = x0 - xs
     r = np.linalg.norm(ds, axis=1)
-    return 1j * k * inner1d(ds, n0) / r * hankel2(1, k * r)
+    return -1j / 2 * k * inner1d(ds, n0) / r * hankel2(1, k * r)
 
 
 def _wfs_point(omega, x0, n0, xs, c=None):
-    """Point source by two- or three-dimensional WFS.
+    """Point source by 2- or 3-dimensional WFS.
 
-    ::
+    Eq.(#byv) in [Wierstorf et al, 2015]::
 
-                     (x0-xs) n0
-      D(x0,k) = j k ------------- e^(-j k |x0-xs|)
-                    |x0-xs|^(3/2)
+                 1  jw   (x0-xs) n0
+      D(x0,w) = --- --  ------------- e^(-j w/c |x0-xs|)
+                2pi c   |x0-xs|^(3/2)
 
     """
     x0 = np.asarray(x0)
@@ -43,7 +45,8 @@ def _wfs_point(omega, x0, n0, xs, c=None):
     k = util.wavenumber(omega, c)
     ds = x0 - xs
     r = np.linalg.norm(ds, axis=1)
-    return 1j * k * inner1d(ds, n0) / r ** (3 / 2) * np.exp(-1j * k * r)
+    return 1j / (2 * np.pi) * k * inner1d(ds, n0) / r ** (3 / 2) * \
+        np.exp(-1j * k * r)
 
 
 wfs_2d_point = _wfs_point
@@ -52,11 +55,11 @@ wfs_2d_point = _wfs_point
 def wfs_25d_point(omega, x0, n0, xs, xref=[0, 0, 0], c=None):
     """Point source by 2.5-dimensional WFS.
 
-    ::
-
-                  ____________   (x0-xs) n0
-      D(x0,k) = \|j k |xref-x0| ------------- e^(-j k |x0-xs|)
-                                |x0-xs|^(3/2)
+    Eq.(#emr) in [Wierstorf et al, 2015]::
+                  _____________
+                 ||xref-x0| jw  (x0-xs) n0
+      D(x0,w) =  |--------- --  ------------- e^(-j w/c |x0-xs|)
+                \|   2pi    c   |x0-xs|^(3/2)
 
     """
     x0 = np.asarray(x0)
@@ -66,19 +69,20 @@ def wfs_25d_point(omega, x0, n0, xs, xref=[0, 0, 0], c=None):
     k = util.wavenumber(omega, c)
     ds = x0 - xs
     r = np.linalg.norm(ds, axis=1)
-    return np.sqrt(1j * k * np.linalg.norm(xref - x0)) * inner1d(ds, n0) / \
-        r ** (3 / 2) * np.exp(-1j * k * r)
+    return np.sqrt(1j * k * np.linalg.norm(xref - x0) / (2 * np.pi)) * \
+        inner1d(ds, n0) / r ** (3 / 2) * np.exp(-1j * k * r)
 
 
 wfs_3d_point = _wfs_point
 
 
 def _wfs_plane(omega, x0, n0, n=[0, 1, 0], c=None):
-    """Plane wave by two- or three-dimensional WFS.
+    """Plane wave by 2- or 3-dimensional WFS.
 
+    Eq.(#5sr) in [Wierstorf et al, 2015] or
     Eq.(17) from [Spors et al, 2008]::
 
-      D(x0,k) =  j k n n0  e^(-j k n x0)
+      D(x0,w) =  2 j w/c n n0  e^(-j w/c n x0)
 
     """
     x0 = np.asarray(x0)
@@ -94,10 +98,10 @@ wfs_2d_plane = _wfs_plane
 def wfs_25d_plane(omega, x0, n0, n=[0, 1, 0], xref=[0, 0, 0], c=None):
     """Plane wave by 2.5-dimensional WFS.
 
-    ::
+    Eq.(#sev) in [Wierstorf et al, 2015]::
 
-                       ____________
-      D_2.5D(x0,w) = \|j k |xref-x0| n n0 e^(-j k n x0)
+                  ___________________
+      D(x0,w) = \|8pi j w/c |xref-x0| n n0 e^(-j w/c n x0)
 
     """
     x0 = np.asarray(x0)
@@ -105,7 +109,7 @@ def wfs_25d_plane(omega, x0, n0, n=[0, 1, 0], xref=[0, 0, 0], c=None):
     n = np.squeeze(np.asarray(n))
     xref = np.squeeze(np.asarray(xref))
     k = util.wavenumber(omega, c)
-    return np.sqrt(2*np.pi * 1j * k * np.linalg.norm(xref - x0)) * \
+    return np.sqrt(8 * np.pi * 1j * k * np.linalg.norm(xref - x0)) * \
         np.inner(n, n0) * np.exp(-1j * k * np.inner(n, x0))
 
 
@@ -123,7 +127,12 @@ def delay_3d_plane(omega, x0, n0, n=[0, 1, 0], c=None):
 def source_selection_plane(n0, n):
     """Secondary source selection for a plane wave.
 
-    Eq.(13) from [Spors et al, 2008]
+    Eq.(#3vy) in [Wierstorf et al, 2015] or
+    Eq.(13) from [Spors et al, 2008]::
+
+               / 1,  n n0 > 0
+      w(x0) = <
+               \ 0,  else
 
     """
     n0 = np.asarray(n0)
@@ -134,7 +143,12 @@ def source_selection_plane(n0, n):
 def source_selection_point(n0, x0, xs):
     """Secondary source selection for a point source.
 
-    Eq.(15) from [Spors et al, 2008]
+    Eq.(#ykn) in [Wierstorf et al, 2015] or
+    Eq.(15) from [Spors et al, 2008]::
+
+               / 1,  (x0-xs) n0 > 0
+      w(x0) = <
+               \ 0,  else
 
     """
     n0 = np.asarray(n0)
@@ -150,7 +164,16 @@ def source_selection_all(N):
 
 
 def nfchoa_2d_plane(omega, x0, r0, n=[0, 1, 0], c=None):
-    """Point source by 2.5-dimensional WFS."""
+    """Point source by 2-dimensional NFC-HOA.
+
+    Eq.(#aov) in [Wierstorf et al, 2015]::
+                       __
+                  2j  \            j^|-m|
+      D(phi0,w) = --  /__    ------------------ e^(j m (phi0-phi_pw) )
+                  r0 m=-N..N       (2)
+                               w/c h|m| (w/c r0)
+
+"""
     x0 = np.asarray(x0)
     k = util.wavenumber(omega, c)
     alpha, beta, r = util.cart2sph(n[0], n[1], n[2])
@@ -167,15 +190,15 @@ def nfchoa_2d_plane(omega, x0, r0, n=[0, 1, 0], c=None):
 
 
 def nfchoa_25d_point(omega, x0, r0, xs, c=None):
-    """Point source by 2.5-dimensional WFS.
+    """Point source by 2.5-dimensional NFC-HOA.
 
-    ::
+    Eq.(#eep) in [Wierstorf et al, 2015]::
 
-                              __      (2)
-                       1     \       h|m| (w/c r)
-         D(phi0,w) = -----   /__    ------------- e^(i m (phi0-phi))
-                      2pi r0 m=-N..N  (2)
-                                     h|m| (w/c r0)
+                            __      (2)
+                     1     \       h|m| (w/c r)
+       D(phi0,w) = ------  /__    ------------- e^(j m (phi0-phi))
+                   2pi r0 m=-N..N  (2)
+                                   h|m| (w/c r0)
 
     """
     x0 = np.asarray(x0)
@@ -196,13 +219,13 @@ def nfchoa_25d_point(omega, x0, r0, xs, c=None):
 def nfchoa_25d_plane(omega, x0, r0, n=[0, 1, 0], c=None):
     """Plane wave by 2.5-dimensional WFS.
 
-    ::
+    Eq.(#cys) in [Wierstorf et al, 2015]::
 
-                             __
-                        2i  \            i^|m|
-        D_25D(phi0,w) = --  /__    ------------------ e^(i m (phi0-phi_pw) )
-                        r0 m=-N..N       (2)
-                                    w/c h|m| (w/c r0)
+                         __
+                    2j  \            j^|m|
+        D(phi0,w) = --  /__    ------------------ e^(j m (phi0-phi_pw) )
+                    r0 m=-N..N       (2)
+                                w/c h|m| (w/c r0)
     """
     x0 = np.asarray(x0)
     k = util.wavenumber(omega, c)
