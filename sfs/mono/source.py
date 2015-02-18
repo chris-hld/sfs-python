@@ -8,7 +8,7 @@ from .. import util
 def point(omega, x0, grid, c=None):
     """Point source.
 
-    ::
+    Eq.(#ynr) in [Wierstorf et al, 2015]::
 
                     1  e^(-j w/c |x-x0|)
       G(x-xs, w) = --- -----------------
@@ -28,7 +28,7 @@ def line(omega, x0, grid, c=None):
 
     Note: third component of x0 is ignored.
 
-    ::
+    Eq.(#54d) in [Wierstorf et al, 2015]::
 
                          (2)
       G(x-xs, w) = -j/4 H0  (w/c |x-x0|)
@@ -51,9 +51,9 @@ def line(omega, x0, grid, c=None):
 def plane(omega, x0, n0, grid, c=None):
     """Plane wave.
 
-    ::
+    Eq.(#vmd) in [Wierstorf et al, 2015]::
 
-      G(x, w) = e^(-i w/c n x)
+      G(x, w) = e^(-j w/c n x)
 
     """
     k = util.wavenumber(omega, c)
