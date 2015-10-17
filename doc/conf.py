@@ -21,12 +21,11 @@ from subprocess import check_output
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('.'))  # temporary, for plot_directive
 
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+needs_sphinx = '1.3'  # for sphinx.ext.napoleon
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -35,16 +34,13 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    # support for NumPy-style docstrings:
-    'sphinxcontrib.napoleon',  # Will be 'sphinx.ext.napoleon' in Sphinx >= 1.3
+    'sphinx.ext.napoleon',  # support for NumPy-style docstrings
     'sphinx.ext.intersphinx',
-    'plot_directive',  # temporary, for :context:close-figs feature
-    # When matplotlib > 1.4.3 is available on readthedocs, we can use this:
-    #'matplotlib.sphinxext.plot_directive',
+    'matplotlib.sphinxext.plot_directive',
 ]
 
-autoclass_content = "init"
-autodoc_member_order = "bysource"
+autoclass_content = 'init'
+autodoc_member_order = 'bysource'
 
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
@@ -84,7 +80,7 @@ master_doc = 'index'
 # General information about the project.
 authors = 'SFS Toolbox Developers'
 project = 'Sound Field Synthesis Toolbox'
-copyright = '2014, ' + authors
+copyright = '2015, ' + authors
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -142,7 +138,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -234,6 +230,8 @@ latex_elements = {
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
+
+'printindex': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
@@ -259,7 +257,7 @@ latex_show_urls = 'footnote'
 #latex_appendices = []
 
 # If false, no module index is generated.
-#latex_domain_indices = True
+latex_domain_indices = False
 
 
 # -- Options for manual page output ---------------------------------------
