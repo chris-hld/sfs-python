@@ -41,6 +41,7 @@ extensions = [
     'plot_directive',  # temporary, for :context:close-figs feature
     # When matplotlib > 1.4.3 is available on readthedocs, we can use this:
     #'matplotlib.sphinxext.plot_directive',
+    'notebook_sphinxext',
 ]
 
 autoclass_content = "init"

@@ -6,6 +6,11 @@
 
 .. default-role::
 
+Example Notebooks
+=================
+
+.. notebook:: ../imshow_colorbar.ipynb
+
 API Documentation
 =================
 
