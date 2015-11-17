@@ -2,14 +2,16 @@
 
 .. include:: ../README.rst
 
+.. only:: html
+
+   Example Notebooks
+   ^^^^^^^^^^^^^^^^^
+
+   * :doc:`example01`.
+
 .. include:: ../CONTRIBUTING.rst
 
 .. default-role::
-
-Example Notebooks
-=================
-
-.. notebook:: runipy-test.ipynb
 
 API Documentation
 =================
