@@ -1,4 +1,7 @@
-""" This is a modified version of ``notebook_sphinext.py``
+"""This is a modified modified version of ``notebook_sphinext.py``.
+
+The modified version with modifications from Matthew Brett was from
+https://github.com/matthew-brett/perrin-academy as of commit 0d29edc
 
 The original was from: https://github.com/ngoldbaum/RunNotebook as of commit
 a3097f50d5
@@ -48,7 +51,7 @@ from runipy.notebook_runner import NotebookRunner
 from IPython import nbformat
 
 # Which notebook format we are using
-NBFORMAT = 3
+NBFORMAT = 4
 
 # Tell notebook runner how to handle SVG
 NotebookRunner.MIME_MAP['image/svg+xml'] = 'svg'
@@ -118,10 +121,10 @@ class NotebookDirective(Directive):
 
         # Make unevaluated version
         with io.open(nb_abs_path, 'r') as f:
-            nb = nbformat.read(f, NBFORMAT)
+            nb = nbformat.read(f, 3)
         clear_output(nb)
         with io.open(dest_path, 'w') as f:
-            nbformat.write(nb, f, NBFORMAT)
+            nbformat.write(nb, f, 3)
         # Copy any other needed files
         for fn in otherfiles:
             shutil.copy2(fn, dest_dir)
@@ -132,7 +135,8 @@ class NotebookDirective(Directive):
         # Create python script version
         script_text = nb_to_python(nb_abs_path)
         f = open(dest_path_script, 'w')
-        f.write(script_text.encode('utf8'))
+        #f.write(script_text.encode('utf8'))
+        f.write(script_text)
         f.close()
 
         try:
@@ -239,7 +243,9 @@ def evaluate_notebook(nb, dest_path=None):
     nb_runner.run_notebook()
     if dest_path is None:
         dest_path = 'temp_evaluated.ipynb'
-    nbformat.write(nb_runner.nb, open(dest_path, 'w'), NBFORMAT)
+    nbformat.write(nb_runner.nb, dest_path, 3)
+    nb = nbformat.read(dest_path, 3)
+    nbformat.write(nb, dest_path, NBFORMAT)
     ret = nb_to_html(dest_path)
     if dest_path is 'temp_evaluated.ipynb':
         os.remove(dest_path)
