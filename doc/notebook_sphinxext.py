@@ -45,10 +45,10 @@ import re
 from sphinx.util.compat import Directive
 from docutils import nodes
 from docutils.parsers.rst import directives
-from IPython.nbconvert import html, python
+from nbconvert import html, python
 from runipy.notebook_runner import NotebookRunner
 
-from IPython import nbformat
+import nbformat
 
 # Which notebook format we are using
 NBFORMAT = 4
