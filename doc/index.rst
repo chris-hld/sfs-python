@@ -9,7 +9,7 @@
 Example Notebooks
 =================
 
-.. notebook:: ../imshow_colorbar.ipynb
+.. notebook:: runipy-test.ipynb
 
 API Documentation
 =================
