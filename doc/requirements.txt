@@ -4,6 +4,7 @@ sphinx
 sphinxcontrib-napoleon
 nbconvert
 nbformat
+runipy
 
 numpy
 scipy
