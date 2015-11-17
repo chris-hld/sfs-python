@@ -5,9 +5,9 @@
 .. only:: html
 
    Example Notebooks
-   ^^^^^^^^^^^^^^^^^
+   -----------------
 
-   * :doc:`example01`.
+   * :doc:`example01`
 
 .. include:: ../CONTRIBUTING.rst
 
