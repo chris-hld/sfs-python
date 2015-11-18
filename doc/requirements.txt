@@ -3,6 +3,9 @@ pygments
 sphinx
 sphinxcontrib-napoleon
 
+nbsphinx
+ipykernel
+
 numpy
 scipy
 matplotlib

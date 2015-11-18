@@ -41,6 +41,7 @@ extensions = [
     'plot_directive',  # temporary, for :context:close-figs feature
     # When matplotlib > 1.4.3 is available on readthedocs, we can use this:
     #'matplotlib.sphinxext.plot_directive',
+    'nbsphinx',
 ]
 
 autoclass_content = "init"
@@ -73,7 +74,8 @@ plot_pre_code = ""
 templates_path = ['_templates']
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ['.rst', '.ipynb']
+source_parsers = {'ipynb': 'nbsphinx.NotebookParser'}
 
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
@@ -111,7 +113,7 @@ except Exception:
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build', '**/.ipynb_checkpoints']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

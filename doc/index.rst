@@ -2,6 +2,13 @@
 
 .. include:: ../README.rst
 
+.. only:: html
+
+   Example Notebooks
+   -----------------
+
+   * :doc:`runipy-test`
+
 .. include:: ../CONTRIBUTING.rst
 
 .. default-role::
